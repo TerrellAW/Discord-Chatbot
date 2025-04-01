@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { Client, Events, GatewayIntentBits } from 'discord.js';
+import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
 
 import { fileURLToPath, pathToFileURL } from 'url';
 import 'dotenv/config';
@@ -15,7 +15,10 @@ const client = new Client({
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
-    ] 
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.DirectMessageTyping,
+    ],
+    partials: [Partials.Channel, Partials.Message]
 });
 
 // Run code once when the client is ready
