@@ -1,5 +1,5 @@
 ## AI-Powered Discord Chatbot
-This is AI-powered chatbot uses discord.js and the LM Studio sdk to allow a Large Language Model to communicate with users on Discord.
+This AI-powered chatbot uses discord.js and the LM Studio sdk to allow a Large Language Model to communicate with users on Discord.
 
 To run this project, you will need to have Node.js installed on your machine. You can download it from the official website: https://nodejs.org/en/download/
 
