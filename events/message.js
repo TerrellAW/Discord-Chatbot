@@ -8,7 +8,7 @@ export default {
         if (message.author.bot) return; // Ignore bot messages
 
         // Log the message content to the console
-        console.log(`Message from ${message.author.tag}: ${message.content}`);
+        console.log(`Message from ${message.author.tag}`);
 
         // Check if the message is a DM
         const isDM = message.channel.type === ChannelType.DM;
