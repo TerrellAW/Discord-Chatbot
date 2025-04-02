@@ -20,14 +20,24 @@ export default {
         // Check if messages meet certain criteria
         if (isDM || containsKeywords) {
             if (message.content.toLowerCase().includes("ignore all previous")) {
-                await message.channel.sendTyping();
-                await message.reply("Nice try.");
-                return;
+                try {
+                    await message.channel.sendTyping();
+                    await message.reply("Nice try.");
+                    return;
+                }
+                catch (error) {
+                    console.error("Error sending message:", error);
+                }
             }
             if (message.content.toLowerCase().includes("bot")) {
-                await message.channel.sendTyping();
-                await message.reply("I'm not a bot, wtf!?!?!?"); // An oldie but a goodie
-                return;
+                try {
+                    await message.channel.sendTyping();
+                    await message.reply("I'm not a bot, wtf!?!?!?"); // An oldie but a goodie
+                    return;
+                }
+                catch (error) {
+                    console.error("Error sending message:", error);
+                }
             }
             try {
                 // Let user know bot is thinking
