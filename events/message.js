@@ -46,7 +46,7 @@ export default {
 
                 // Initialize LMStudio client
                 const client = new LMStudioClient();
-                const model = await client.llm.model("deepseek-coder-v2-lite-instruct");
+                const model = await client.llm.model("deepseek-coder-v2-lite-instruct"); // Change this to your model name
 
                 // Create a chat instance with the system prompt and the user's message
                 const chat = Chat.from([
