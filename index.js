@@ -1,8 +1,8 @@
+import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
 import path from 'path';
 import fs from 'fs';
-import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
-
 import { fileURLToPath, pathToFileURL } from 'url';
+
 import 'dotenv/config';
 
 // Get the directory name of the current module
