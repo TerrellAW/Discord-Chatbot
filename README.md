@@ -16,14 +16,7 @@ To configure the bot, you will need to create a .env file in the root directory 
 ```
 DISCORD_TOKEN=your-discord-bot-token
 ```
-You can find your Discord bot token by following these steps:
-1. Go to the Discord Developer Portal: https://discord.com/developers/applications
-2. Click on the "New Application" button.
-3. Give your application a name and click on the "Create" button.
-4. Click on the "Bot" tab on the left-hand side of the page.
-5. Click on the "Add Bot" button.
-6. Click on the "Copy" button next to the "Token" field.
-7. Paste the token into the .env file as the value of the DISCORD_TOKEN environment variable.
+You can find your Discord bot token by following the steps in Discord's developer documentation: https://discord.com/developers/docs/quick-start/getting-started
 
 You will also need to install LM Studio and create a model. You can find more information on how to do this in the LM Studio documentation: https://docs.lmstudio.ai/
 
