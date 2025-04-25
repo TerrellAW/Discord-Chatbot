@@ -7,7 +7,11 @@ Additionally you will need to install the necessary dependencies by running the 
 ```
 npm install
 ```
-Once you have installed the dependencies, you can start the bot by running the following command:
+Once you have installed the dependencies, you can deploy the commands by running:
+```
+node commands/deploy-commands.js
+```
+Once the commands are deployed, run the bot with:
 ```
 node index.js
 ```
