@@ -19,7 +19,7 @@ node deploy-commands.js --global
 ```
 Or:
 ```
-node deploy-commands.js --G
+node deploy-commands.js -G
 ```
 It can take up to an hour or more for global commands to appear in Discord.
 
