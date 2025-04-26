@@ -30,7 +30,7 @@ export default {
                     console.error("Error sending message:", error);
                 }
             }
-            if (message.content.toLowerCase().includes(" bot || chatbot ")) {
+            if (/\b(bot|chatbot)\b/i.test(message.content.toLowerCase())) {
                 try {
                     await message.channel.sendTyping();
                     await message.reply("I'm not a bot, wtf!?!?!?"); // An oldie but a goodie
