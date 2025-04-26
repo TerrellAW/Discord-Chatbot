@@ -36,14 +36,36 @@ const rest = new REST().setToken(process.env.DISCORD_TOKEN);
     try {
         console.log('Started refreshing application (/) commands.');
 
+        // Parse command line arguments
+        const args = process.argv.slice(2);
+        const forceGuild = args.includes('--guild') || args.includes('-g');
+        const forceGlobal = args.includes('--global') || args.includes('-G');
+
+        // Choose global or guild deployment
+        let globalDeploy = false;
+        if (forceGuild) {
+            globalDeploy = false;
+        }
+        else if (forceGlobal) {
+            globalDeploy = true;
+        } else {
+            // Default to guild deployment if no flags are provided
+            globalDeploy = false;
+        }
+
         // Delete all existing commands
         await rest.put(Routes.applicationCommands(process.env.APP_ID), { body: [] });
         console.log('Successfully deleted all existing commands.');
 
         // Register the commands with Discord
-        await rest.put(Routes.applicationGuildCommands(process.env.APP_ID, process.env.SERVER_ID), { body: commands });
-
-        console.log(`Successfully reloaded ${commands.length} application (/) commands.`);
+        if (globalDeploy) {
+            await rest.put(Routes.applicationCommands(process.env.APP_ID), { body: commands });
+            console.log('Successfully registered application (/) commands globally.');
+        }
+        else {
+            await rest.put(Routes.applicationGuildCommands(process.env.APP_ID, process.env.SERVER_ID), { body: commands });
+            console.log('Successfully registered application (/) commands for the guild.');
+        }
     } catch (error) {
         console.error(error);
     }

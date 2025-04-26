@@ -9,8 +9,20 @@ npm install
 ```
 Once you have installed the dependencies, you can deploy the commands by running:
 ```
-node commands/deploy-commands.js
+node deploy-commands.js
 ```
+By default the commands will deploy to one server, as this is quicker. The server will be defined in your .env file. See Configuration for more information.
+
+To deploy commands globally, run this command instead:
+```
+node deploy-commands.js --global
+```
+Or:
+```
+node deploy-commands.js --G
+```
+It can take up to an hour or more for global commands to appear in Discord.
+
 Once the commands are deployed, run the bot with:
 ```
 node index.js
@@ -19,6 +31,7 @@ node index.js
 To configure the bot, you will need to create a .env file in the root directory of the project and add the following environment variables:
 ```
 DISCORD_TOKEN=your-discord-bot-token
+SERVER_ID=your-development-server-id
 ```
 You can find your Discord bot token by following these steps:
  1. Go to the Discord Developer Portal: https://discord.com/developers/applications
@@ -28,6 +41,8 @@ You can find your Discord bot token by following these steps:
  5. Click on the "Add Bot" button.
  6. Click on the "Copy" button next to the "Token" field.
  7. Paste the token into the .env file as the value of the DISCORD_TOKEN environment variable.
+
+You can find your Discord server's ID by right clicking on the server's name and clicking copy ID. You will need developer mode to be on in Discord's settings under App Settings/Advanced.
 
 You will also need to install LM Studio and create a model. You can get LM Studio here: https://lmstudio.ai/
 
