@@ -9,7 +9,7 @@ import {
 export default {
     data: new SlashCommandBuilder()
         .setName("vote")
-        .setDescription("`/vote option1, option2, option3` to create a poll")
+        .setDescription("`/vote option1, option2, option3, ...` to create a poll")
         .addStringOption(option =>
             option
                 .setName("options")
