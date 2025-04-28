@@ -1,6 +1,8 @@
 import { Events, ChannelType } from 'discord.js';
 import { LMStudioClient, Chat } from '@lmstudio/sdk';
 
+import 'dotenv/config';
+
 export default {
     name: Events.MessageCreate,
     once: false,
@@ -46,7 +48,7 @@ export default {
 
                 // Initialize LMStudio client
                 const client = new LMStudioClient();
-                const model = await client.llm.model("deepseek-coder-v2-lite-instruct"); // Change this to your model name
+                const model = await client.llm.model(process.env.AI_MODEL);
 
                 // Create a chat instance with the system prompt and the user's message
                 const chat = Chat.from([
