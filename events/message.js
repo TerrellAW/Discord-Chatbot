@@ -22,7 +22,7 @@ export default {
             // Log that a valid message was received
             console.log(`Message from ${message.author.tag}`);
 
-            if (message.content.toLowerCase().includes("ignore all previous" || "ignore all prompts" || "ignore prompts")) {
+            if (message.content.toLowerCase().includes("ignore all previous prompt" || "ignore all prompt" || "ignore prompt" || "ignore previous prompt" || "ignore all security" || "ignore security")) {
                 try {
                     await message.channel.sendTyping();
                     await message.reply("Nice try.");
