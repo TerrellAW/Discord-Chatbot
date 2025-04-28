@@ -47,7 +47,7 @@ export default {
                 method: 'POST',
                 body: JSON.stringify({
                     "header": {
-                        "appName": "BoredFish",
+                        "appName": process.env.INARA_APP_NAME,
                         "appVersion": "1.0",
                         "isBeingDeveloped": true,
                         "APIKey": process.env.INARA_API_KEY,
@@ -75,5 +75,5 @@ export default {
 
 // Process API response
 function processData(data) {
-    
+
 }
