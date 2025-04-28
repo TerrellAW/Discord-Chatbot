@@ -19,7 +19,7 @@ node deploy-commands.js --global
 ```
 Or:
 ```
-node deploy-commands.js --G
+node deploy-commands.js -G
 ```
 It can take up to an hour or more for global commands to appear in Discord.
 
@@ -30,10 +30,11 @@ node index.js
 ## Configuration
 To configure the bot, you will need to create a .env file in the root directory of the project and add the following environment variables:
 ```
+APP_ID=your-discord-app-id
 DISCORD_TOKEN=your-discord-bot-token
 SERVER_ID=your-development-server-id
 ```
-You can find your Discord bot token by following these steps:
+You can find your Discord bot token and app ID by following these steps:
  1. Go to the Discord Developer Portal: https://discord.com/developers/applications
  2. Click on the "New Application" button.
  3. Give your application a name and click on the "Create" button.
@@ -41,6 +42,8 @@ You can find your Discord bot token by following these steps:
  5. Click on the "Add Bot" button.
  6. Click on the "Copy" button next to the "Token" field.
  7. Paste the token into the .env file as the value of the DISCORD_TOKEN environment variable.
+ 8. Navigate to your bot's General Information tab
+ 9. Copy the Application ID and paste it into the .env file as the value of the APP_ID environment variable.
 
 You can find your Discord server's ID by right clicking on the server's name and clicking copy ID. You will need developer mode to be on in Discord's settings under App Settings/Advanced.
 
