@@ -48,7 +48,7 @@ export default {
                 body: JSON.stringify({
                     "header": {
                         "appName": process.env.INARA_APP_NAME,
-                        "appVersion": "1.0",
+                        "appVersion": process.env.INARA_APP_VERSION,
                         "isBeingDeveloped": true,
                         "APIKey": process.env.INARA_API_KEY,
                         "commanderName": process.env.INARA_COMMANDER_NAME,
