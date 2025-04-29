@@ -64,11 +64,11 @@ const rest = new REST().setToken(process.env.DISCORD_TOKEN);
             await rest.put(Routes.applicationCommands(process.env.APP_ID), { body: commands });
             console.log('Successfully registered application (/) commands globally.');
         }
-        else if (guildDeploy) {
+        if (guildDeploy) {
             await rest.put(Routes.applicationGuildCommands(process.env.APP_ID, process.env.SERVER_ID), { body: commands });
             console.log('Successfully registered application (/) commands for the guild.');
         }
-        else { // Default to guild deployment if no flags are provided
+        else if (!globalDeploy) { // Default to guild deployment if no flags are provided
             await rest.put(Routes.applicationGuildCommands(process.env.APP_ID, process.env.SERVER_ID), { body: commands });
             console.log('Successfully registered application (/) commands for the guild.');
         }
