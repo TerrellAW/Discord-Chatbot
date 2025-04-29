@@ -9,7 +9,7 @@ const inaraApiUrl = "https://inara.cz/inapi/v1/";
 // Cache mechanism
 let lastRequestTime = 0;
 let cachedResponse = null;
-const cacheDuration = 3600000; // 1 hour in milliseconds
+const cacheDuration = 14400000; // 4 hours in milliseconds
 
 // Get the current date and time
 const currentDate = new Date();
@@ -37,7 +37,7 @@ export default {
         const currentTime = Date.now();
         if (cachedResponse && currentTime - lastRequestTime < cacheDuration) {
             console.log("Using cached community goals data");
-            return await interaction.editReply(/* Parse cached response into embed */);
+            return await interaction.editReply({ embeds: [cachedResponse] });
         }
 
         console.log("Fetching new community goals data from INARA API");
@@ -65,6 +65,15 @@ export default {
             });
 
             const data = await response.json();
+
+            const embed = processData(data);
+
+            // Update the cache
+            cachedResponse = embed;
+            lastRequestTime = currentTime;
+
+            // Send the embed as a reply
+            return await interaction.editReply({ embeds: [embed] });
         }
         catch (error) {
             console.error("Error fetching community goals:", error);
@@ -75,5 +84,69 @@ export default {
 
 // Process API response
 function processData(data) {
+    // Create new embed
+    const embed = new EmbedBuilder()
+        .setColor("#0099FF")
+        .setTitle("Elite Dangerous Community Goals")
+        .setFooter({ text: "Data provided by [INARA](https://inara.cz/elite/communitygoals/)"});
 
+    // Check if the response contains community goals data
+    if (!data.events || !data.events[0] || !data.events[0].eventData) {
+        embed.setDescription("Unable to retrieve community goals data.");
+        return embed;
+    }
+
+    // Extract community goals data
+    const communityGoals = data.events[0].eventData;
+
+    // Check if there are any community goals
+    if (communityGoals.length === 0) {
+        embed.setDescription("There are currently no active community goals in Elite Dangerous.");
+        return embed;
+    }
+
+    // Add information about each community goal to the embed
+    communityGoals.forEach((goal, index) => {
+        // Skip if goal does not have a name
+        if (!goal.communitygoalName) {
+            return;
+        }
+
+        // Format goal information
+        const goalNumber = index + 1;
+        const goalName = goal.communitygoalName;
+        const goalSystem = goal.starsystemName || "Unknown System";
+        const goalStation = goal.stationName || "Unknown Station";
+        const goalExpiry = goal.goalExpiry || "Unknown Expiry Date";
+        const goalObjective = goal.goalObjectiveText || "No objective specified";
+
+        // Format the expiry date
+        let timeRemaining = "Unknown";
+        if (goalExpiry) {
+            const expiryDate = new Date(goalExpiry);
+            timeRemaining = `Expires ${time(expiryDate, "R")}`;
+        }
+
+        // Progress variables
+        const progress = (goal.tierReached / goal.tierMax) * 100;
+        const avgContributions = (goal.contributionsTotal / goal.contributorsNum);
+
+        // Format progress bar
+        const progressBar = "█".repeat(Math.floor(progress / 10)) + "░".repeat(10 - Math.floor(progress / 10));
+        const progressText = `Tier ${goal.tierReached}/${goal.tierMax} (${progress.toFixed(2)}%)`;
+        const avgContributionsText = `${avgContributions} Cr`;
+
+        // Add fields to the embed for each community goal
+        embed.addFields({
+            name: `${goalNumber}. ${goalName}`,
+            value: `**Location:** ${goalSystem} - ${goalStation}\n` +
+                   `**Time Remaining:** ${timeRemaining}\n` +
+                   `**Objective:** ${goalObjective}\n` +
+                   `${progressBar}\n` +
+                   `${progressText}\n` +
+                   `**Average Contribution:** ${avgContributionsText}`,
+        });
+    });
+
+    return embed;
 }
