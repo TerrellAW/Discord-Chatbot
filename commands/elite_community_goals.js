@@ -88,7 +88,8 @@ function processData(data) {
     const embed = new EmbedBuilder()
         .setColor("#0099FF")
         .setTitle("Elite Dangerous Community Goals")
-        .setFooter({ text: "Data provided by [INARA](https://inara.cz/elite/communitygoals/)"});
+        .setURL("https://inara.cz/elite/communitygoals/")
+        .setFooter({ text: "Data provided by INARA, click to view on their site" });
 
     // Check if the response contains community goals data
     if (!data.events || !data.events[0] || !data.events[0].eventData) {
@@ -100,7 +101,14 @@ function processData(data) {
     const communityGoals = data.events[0].eventData;
 
     // Check if there are any community goals
-    if (communityGoals.length === 0) {
+    if (!communityGoals || communityGoals.length === 0) {
+        embed.setDescription("There are currently no active community goals in Elite Dangerous.");
+        return embed;
+    }
+
+    // Count valid goals with names
+    const validGoals = communityGoals.filter(goal => goal.communitygoalName).length;
+    if (validGoals === 0) {
         embed.setDescription("There are currently no active community goals in Elite Dangerous.");
         return embed;
     }
