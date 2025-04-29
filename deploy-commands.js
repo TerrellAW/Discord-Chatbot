@@ -40,6 +40,7 @@ const rest = new REST().setToken(process.env.DISCORD_TOKEN);
         const args = process.argv.slice(2);
         const forceGuild = args.includes('--guild') || args.includes('-g');
         const forceGlobal = args.includes('--global') || args.includes('-G');
+        const dontDelete = args.includes('--preserve') || args.includes('-p');
 
         // Choose global or guild deployment
         let globalDeploy = false;
@@ -54,8 +55,11 @@ const rest = new REST().setToken(process.env.DISCORD_TOKEN);
         }
 
         // Delete all existing commands
-        await rest.put(Routes.applicationCommands(process.env.APP_ID), { body: [] });
-        console.log('Successfully deleted all existing commands.');
+        if (!dontDelete) {
+            await rest.put(Routes.applicationCommands(process.env.APP_ID), { body: [] });
+            await rest.put(Routes.applicationGuildCommands(process.env.APP_ID, process.env.SERVER_ID), { body: [] });
+            console.log('Successfully deleted all existing commands.');
+        }
 
         // Register the commands with Discord
         if (globalDeploy) {
