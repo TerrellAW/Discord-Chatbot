@@ -75,4 +75,4 @@ const rest = new REST().setToken(process.env.DISCORD_TOKEN);
     } catch (error) {
         console.error(error);
     }
-})(); // Recursively call the function to ensure all commands are registered
+})();
