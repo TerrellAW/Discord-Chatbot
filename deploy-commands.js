@@ -44,18 +44,16 @@ const rest = new REST().setToken(process.env.DISCORD_TOKEN);
 
         // Choose global or guild deployment
         let globalDeploy = false;
+        let guildDeploy = false;
         if (forceGuild) {
-            globalDeploy = false;
+            guildDeploy = true;
         }
-        else if (forceGlobal) {
+        if (forceGlobal) {
             globalDeploy = true;
-        } else {
-            // Default to guild deployment if no flags are provided
-            globalDeploy = false;
         }
 
         // Delete all existing commands
-        if (!dontDelete) {
+        if (!dontDelete) { // Default to deleting commands if no flags are provided
             await rest.put(Routes.applicationCommands(process.env.APP_ID), { body: [] });
             await rest.put(Routes.applicationGuildCommands(process.env.APP_ID, process.env.SERVER_ID), { body: [] });
             console.log('Successfully deleted all existing commands.');
@@ -66,7 +64,11 @@ const rest = new REST().setToken(process.env.DISCORD_TOKEN);
             await rest.put(Routes.applicationCommands(process.env.APP_ID), { body: commands });
             console.log('Successfully registered application (/) commands globally.');
         }
-        else {
+        else if (guildDeploy) {
+            await rest.put(Routes.applicationGuildCommands(process.env.APP_ID, process.env.SERVER_ID), { body: commands });
+            console.log('Successfully registered application (/) commands for the guild.');
+        }
+        else { // Default to guild deployment if no flags are provided
             await rest.put(Routes.applicationGuildCommands(process.env.APP_ID, process.env.SERVER_ID), { body: commands });
             console.log('Successfully registered application (/) commands for the guild.');
         }
