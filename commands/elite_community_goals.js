@@ -138,10 +138,12 @@ function processData(data) {
         // Progress variables
         const progress = (goal.tierReached / goal.tierMax) * 100;
         const avgContributions = (goal.contributionsTotal / goal.contributorsNum);
+        const tierMax = goal.tierMax || 0;
+        const tierReached = goal.tierReached || 0;
 
         // Format progress bar
         const progressBar = "█".repeat(Math.floor(progress / 10)) + "░".repeat(10 - Math.floor(progress / 10));
-        const progressText = `Tier ${goal.tierReached}/${goal.tierMax} (${progress.toFixed(2)}%)`;
+        const progressText = `Tier ${tierReached}/${tierMax} (${progress.toFixed(2)}%)`;
         const avgContributionsText = `${avgContributions} Cr`;
 
         // Add fields to the embed for each community goal
