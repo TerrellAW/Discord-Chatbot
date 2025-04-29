@@ -93,7 +93,7 @@ function processData(data) {
 
     // Check if the response contains community goals data
     if (!data.events || !data.events[0] || !data.events[0].eventData) {
-        embed.setDescription("Unable to retrieve community goals data.");
+        embed.setDescription("There are currently no active community goals in Elite Dangerous.");
         return embed;
     }
 
