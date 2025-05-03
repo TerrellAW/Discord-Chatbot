@@ -18,7 +18,7 @@ const timezoneSign = timezoneOffset >= 0 ? '+' : ''; // Sign for the timezone of
 
 function formatDate(currentDate) {
     const year = (currentDate.getFullYear()).toString();
-    const month = (currentDate.getMonth()).toString().padStart(2, '0');
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
     const day = (currentDate.getDate()).toString().padStart(2, '0');
     const hour = (currentDate.getHours()).toString().padStart(2, '0');
     const minute = (currentDate.getMinutes()).toString().padStart(2, '0');
@@ -50,7 +50,7 @@ export default {
                         "appName": process.env.INARA_APP_NAME,
                         "appVersion": process.env.INARA_APP_VERSION,
                         "isBeingDeveloped": true,
-                        "APIKey": process.env.INARA_API_KEY,
+                        "APIkey": process.env.INARA_API_KEY,
                         "commanderName": process.env.INARA_COMMANDER_NAME,
                         "commanderFrontierID": process.env.INARA_COMMANDER_FRONTIER_ID,
                     },
@@ -91,9 +91,12 @@ function processData(data) {
         .setURL("https://inara.cz/elite/communitygoals/")
         .setFooter({ text: "Data provided by INARA, click to view on their site" });
 
+    // Log API response for debugging
+    console.log("API Response:", JSON.stringify(data, null, 2));
+
     // Check if the response contains community goals data
     if (!data.events || !data.events[0] || !data.events[0].eventData) {
-        embed.setDescription("There are currently no active community goals in Elite Dangerous.");
+        embed.setDescription("Error fetching community goals. Please try again later.");
         return embed;
     }
 
@@ -154,7 +157,8 @@ function processData(data) {
                    `**Objective:** ${goalObjective}\n` +
                    `${progressBar}\n` +
                    `${progressText}\n` +
-                   `**Average Contribution:** ${avgContributionsText}`,
+                   `**Average Contribution:** ${avgContributionsText}\n` +
+                   `-------------------------------------------------------`,
         });
     });
 
