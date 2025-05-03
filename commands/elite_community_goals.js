@@ -91,9 +91,6 @@ function processData(data) {
         .setURL("https://inara.cz/elite/communitygoals/")
         .setFooter({ text: "Data provided by INARA, click to view on their site" });
 
-    // Log API response for debugging
-    console.log("API Response:", JSON.stringify(data, null, 2));
-
     // Check if the response contains community goals data
     if (!data.events || !data.events[0] || !data.events[0].eventData) {
         embed.setDescription("Error fetching community goals. Please try again later.");
@@ -105,24 +102,30 @@ function processData(data) {
 
     // Check if there are any community goals
     if (!communityGoals || communityGoals.length === 0) {
-        embed.setDescription("There are currently no active community goals in Elite Dangerous.");
+        embed.setDescription("Community goal data was not retrieved. Ensure you have the correct INARA API key and that the API is available.");
         return embed;
     }
 
-    // Count valid goals with names
-    const validGoals = communityGoals.filter(goal => goal.communitygoalName).length;
-    if (validGoals === 0) {
-        embed.setDescription("There are currently no active community goals in Elite Dangerous.");
-        return embed;
-    }
-
-    // Add information about each community goal to the embed
-    communityGoals.forEach((goal, index) => {
-        // Skip if goal does not have a name
-        if (!goal.communitygoalName) {
-            return;
+    // Filter out community goals that have expired
+    const activeGoals = communityGoals.filter(goal => {
+        // Skip goals without an expiry date or name
+        if (!goal.goalExpiry || !goal.communitygoalName) {
+            return false;
         }
 
+        // Check if the goal has expired
+        const expiryDate = new Date(goal.goalExpiry);
+        return expiryDate > currentDate;
+    });
+
+    // Check if there are any active community goals
+    if (activeGoals.length === 0) {
+        embed.setDescription("There are currently no active community goals in Elite Dangerous.");
+        return embed;
+    }
+
+    // Add information about each active community goal to the embed
+    activeGoals.forEach((goal, index) => {
         // Format goal information
         const goalNumber = index + 1;
         const goalName = goal.communitygoalName;
