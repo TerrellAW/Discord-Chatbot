@@ -15,6 +15,12 @@ APP_ID=your-discord-app-id
 DISCORD_TOKEN=your-discord-bot-token
 SERVER_ID=your-development-server-id
 AI_MODEL=AI-model-api-identifier-from-LMStudio-developer-tab
+SYSTEM_PROMPT="optional-prompt-to-determine-AI-goals-and-personality" (optional)
+KEYWORDS=optional, list, of, keywords, to, trigger, bot (optional)
+PROMPT_EVASION_DETECTION=true/false (optional)
+PROMPT_EVASION_DETECTION_MESSAGE=Nice try. (optional)
+BOT_DETECTION=true/false (optional)
+BOT_DETECTION_MESSAGE=I am not a bot! (optional)
 ```
 You can find your Discord bot token and app ID by following these steps:
  1. Go to the Discord Developer Portal: https://discord.com/developers/applications

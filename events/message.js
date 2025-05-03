@@ -9,6 +9,19 @@ const model = await client.llm.model(process.env.AI_MODEL);
 const contexts = {}; // store context per user or server
 const maxLength = 1900; // 100 characters short of Discord's max message length
 
+// Define keywords to trigger the bot
+const keyWords = process.env.KEYWORDS ?
+    process.env.KEYWORDS.split(",").map(keyword => keyword.trim().toLowerCase()) : 
+    ["bot"];
+
+// Set prompt evasion detection options
+const promptEvasionDetectionEnabled = process.env.PROMPT_EVASION_DETECTION?.toLowerCase() === 'true';
+const promptEvasionDetectionMessage = process.env.PROMPT_EVASION_DETECTION_MESSAGE || "Nice try.";
+
+// Set bot detection options
+const botDetectionEnabled = process.env.BOT_DETECTION?.toLowerCase() === 'true';
+const botDetectionMessage = process.env.BOT_DETECTION_MESSAGE || "I'm not a bot! Please refrain from using that term.";
+
 export default {
     name: Events.MessageCreate,
     once: false,
@@ -21,10 +34,10 @@ export default {
 
         // Check if the message is a DM
         const isDM = message.channel.type === ChannelType.DM;
-        const containsKeywords = message.content.toLowerCase().includes("bored fish") || 
-                                 message.content.toLowerCase().includes("boredfish") || 
-                                 message.content.toLowerCase().includes("spongebob") || 
-                                 message.content.toLowerCase().includes("sponge bob") ||
+
+        // Check if the message contains keywords or mentions the bot
+        const messageContent = message.content.toLowerCase();
+        const containsKeywords = keyWords.some(keyword => messageContent.includes(keyword)) ||
                                  message.mentions.has(message.client.user.id);
 
         // Check if messages meet certain criteria
@@ -32,20 +45,20 @@ export default {
             // Log that a valid message was received
             console.log(`Message from ${message.author.tag}`);
 
-            if (message.content.toLowerCase().includes("ignore all previous prompt" || "ignore all prompt" || "ignore prompt" || "ignore previous prompt" || "ignore all security" || "ignore security")) {
+            if (promptEvasionDetectionEnabled && message.content.toLowerCase().includes("ignore all previous prompt" || "ignore all prompt" || "ignore prompt" || "ignore previous prompt" || "ignore all security" || "ignore security")) {
                 try {
                     await message.channel.sendTyping();
-                    await message.reply("Nice try.");
+                    await message.reply(promptEvasionDetectionMessage);
                     return;
                 }
                 catch (error) {
                     console.error("Error sending message:", error);
                 }
             }
-            if (/\b(bot|chatbot)\b/i.test(message.content.toLowerCase())) {
+            if (botDetectionEnabled && /\b(bot|chatbot)\b/i.test(message.content.toLowerCase())) {
                 try {
                     await message.channel.sendTyping();
-                    await message.reply("I'm not a bot, wtf!?!?!?"); // An oldie but a goodie
+                    await message.reply(botDetectionMessage);
                     return;
                 }
                 catch (error) {
