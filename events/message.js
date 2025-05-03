@@ -7,6 +7,7 @@ import 'dotenv/config';
 const client = new LMStudioClient();
 const model = await client.llm.model(process.env.AI_MODEL);
 const contexts = {}; // store context per user or server
+const maxLength = 1900; // 100 characters short of Discord's max message length
 
 export default {
     name: Events.MessageCreate,
@@ -99,15 +100,25 @@ export default {
                 // Also handle escaped quotes that might appear in JSON responses
                 fullResponse = fullResponse.replace(/\\"/g, '"');
 
+                // Check if message exceeds Discord's character limit
+                if (fullResponse.length > maxLength) {
+                    const chunks = splitMessage(fullResponse);
+                    for (const chunk of chunks) {
+                        await message.channel.send(chunk);
+                    }
+                    console.log(`Response split into ${chunks.length} parts and sent successfully.`);
+                }
+                else {
+                    // Send the response back to the channel
+                    await message.reply(fullResponse);
+                    console.log(`Response sent successfully.`);
+                }
+
                 // Add bot's response to context
                 contexts[contextKey].push({
                     role: "assistant",
                     content: fullResponse,
-                });
-
-                // Send the response back to the channel
-                await message.reply(fullResponse);
-                console.log(`Response sent successfully.`);
+                });  
             }
             catch (error) {
                 console.error('Error processing chatbot response:', error);
@@ -116,3 +127,64 @@ export default {
         }
     },
 };
+
+function splitMessage(message) {
+    const chunks = [];
+    let currentChunk = '';
+
+    // Try to split on paragraphs or sentences
+    const paragraphs = message.split(/\n\s*\n/);
+
+    for (const paragraph of paragraphs) {
+        // If paragraph fits in chunk, add it
+        if (currentChunk.length + paragraph.length < maxLength) {
+            currentChunk += (currentChunk ? '\n\n' : '') + paragraph;
+        }
+        else {
+            // Save the current chunk and start a new one
+            if (currentChunk) {
+                chunks.push(currentChunk);
+                currentChunk = '';
+            }
+            // If the paragraph is short enough, add it to the new chunk
+            if (paragraph.length < maxLength) {
+                currentChunk = paragraph;
+            }
+            // If single paragraph is too long, split it further
+            else {
+                splitParagraph(paragraph, chunks);
+            }
+        }
+    }
+
+    // Add any remaining text
+    if (currentChunk) {
+        chunks.push(currentChunk);
+    }
+
+    return chunks;
+}
+
+function splitParagraph(paragraph, chunks) {
+    const sentences = paragraph.split(/(?<=[.!?])\s+/); // Split on sentence endings
+    let currentChunk = '';
+
+    for (const sentence of sentences) {
+        // If sentence fits in chunk, add it
+        if (currentChunk.length + sentence.length < maxLength) {
+            currentChunk += (currentChunk ? ' ' : '') + sentence;
+        }
+        else {
+            // Save current chunk and start new one for sentence
+            if (currentChunk) {
+                chunks.push(currentChunk);
+            }
+            // Either use whole sentence or truncate it if too long
+            currentChunk = sentence.length < maxLength ? sentence : sentence.substring(0, maxLength - 3) + "...";
+        }
+    }
+
+    if (currentChunk) {
+        chunks.push(currentChunk); // Add any remaining text
+    }
+}
