@@ -3,11 +3,20 @@ import { LMStudioClient, Chat } from '@lmstudio/sdk';
 
 import 'dotenv/config';
 
+// Initialize LMStudio client
+const client = new LMStudioClient();
+const model = await client.llm.model(process.env.AI_MODEL);
+const contexts = {}; // store context per user or server
+
 export default {
     name: Events.MessageCreate,
     once: false,
     async execute(message) {
         if (message.author.bot) return; // Ignore bot messages
+
+        // If guild message, context key is guild id, else its user id
+        const contextKey = message.guild ? `guild-${message.guild.id}` : `dm-${message.author.id}`;
+        if (!contexts[contextKey]) contexts[contextKey] = []; // Initialize context if it doesn't exist
 
         // Check if the message is a DM
         const isDM = message.channel.type === ChannelType.DM;
@@ -46,21 +55,33 @@ export default {
                 // Let user know bot is thinking
                 await message.channel.sendTyping();
 
-                // Initialize LMStudio client
-                const client = new LMStudioClient();
-                const model = await client.llm.model(process.env.AI_MODEL);
-
-                // Create a chat instance with the system prompt and the user's message
-                const chat = Chat.from([
-                    {
+                // Add system prompt to new contexts
+                if (contexts[contextKey].length === 0) {
+                    contexts[contextKey].push({
                         role: "system",
                         content: process.env.SYSTEM_PROMPT || "You are a helpful assistant. Answer the user's questions and provide information as needed.",
-                    },
-                    {
-                        role: "user",
-                        content: message.content,
-                    }
-                ]);
+                    });
+                }
+
+                // Add user messages to context
+                contexts[contextKey].push({
+                    role: "user",
+                    content: message.content,
+                });
+
+                // Limit context size by amount of messages
+                const maxContextMessages = 10; // Adjust this value as needed
+                if (contexts[contextKey].length > maxContextMessages) {
+                    // Keep system prompt and remove oldest user messages
+                    const systemPrompt = contexts[contextKey][0];
+                    contexts[contextKey] = [
+                        systemPrompt,
+                        ...contexts[contextKey].slice(-maxContextMessages + 1),
+                    ];
+                }
+
+                // Create chat instance with the context
+                const chat = Chat.from(contexts[contextKey]);
 
                 // Get the response from the model
                 const prediction = model.respond(chat);
@@ -69,6 +90,20 @@ export default {
                 for await (const { content } of prediction) {
                     fullResponse += content;
                 }
+
+                // Remove surrounding quotation marks if present
+                if (fullResponse.startsWith('"') && fullResponse.endsWith('"')) {
+                    fullResponse = fullResponse.slice(1, -1);
+                }
+
+                // Also handle escaped quotes that might appear in JSON responses
+                fullResponse = fullResponse.replace(/\\"/g, '"');
+
+                // Add bot's response to context
+                contexts[contextKey].push({
+                    role: "assistant",
+                    content: fullResponse,
+                });
 
                 // Send the response back to the channel
                 await message.reply(fullResponse);
