@@ -40,12 +40,29 @@ export default {
         const containsKeywords = keyWords.some(keyword => messageContent.includes(keyword)) ||
                                  message.mentions.has(message.client.user.id);
 
+        // Prompt evasion detection
+        const promptEvasionTerms = [
+            "ignore all previous prompt",
+            "ignore all prompt",
+            "ignore prompt",
+            "ignore previous prompt",
+            "ignore all security",
+            "ignore security",
+            "bypass security",
+            "bypass all security",
+            "bypass all previous security",
+            "bypass all previous prompt",
+            "bypass all prompt",
+            "bypass prompt"
+        ];
+
         // Check if messages meet certain criteria
         if (isDM || containsKeywords) {
             // Log that a valid message was received
             console.log(`Message from ${message.author.tag}`);
 
-            if (promptEvasionDetectionEnabled && message.content.toLowerCase().includes("ignore all previous prompt" || "ignore all prompt" || "ignore prompt" || "ignore previous prompt" || "ignore all security" || "ignore security")) {
+            if (promptEvasionDetectionEnabled && 
+                promptEvasionTerms.some(term => message.content.toLowerCase().includes(term))) {
                 try {
                     await message.channel.sendTyping();
                     await message.reply(promptEvasionDetectionMessage);
@@ -101,8 +118,41 @@ export default {
                 const prediction = model.respond(chat);
 
                 let fullResponse = '';
-                for await (const { content } of prediction) {
-                    fullResponse += content;
+                let responseTimer = null;
+                let receivedAnyContent = false;
+
+                try {
+                    const responseTimeout = new Promise((_, reject) => {
+                        responseTimer = setTimeout(() => {
+                            reject(new Error("Response timed out - model took too long to respond."));
+                        }, 30000); // 30 second timeout
+                    });
+
+                    // Process response with timeout protection
+                    for await (const { content } of prediction) {
+                        fullResponse += content;
+                    }
+
+                    // Clear the timeout if response is received in time
+                    clearTimeout(responseTimer);
+                }
+                catch (error) {
+                    clearTimeout(responseTimer);
+                    console.error("Error during response streaming:", error);
+                    if (!receivedAnyContent) {
+                        await message.reply("Sorry, I couldn't come up with a response.");
+                        return;
+                    }
+                }
+
+                // Add pause to ensure response is fully received before processing
+                await new Promise(resolve => setTimeout(resolve, 100));
+
+                // Check if the response is empty
+                if (!fullResponse) {
+                    console.log("Empty response received from the model.");
+                    await message.reply("Sorry, I couldn't come up with a response");
+                    return;
                 }
 
                 // Remove surrounding quotation marks if present
@@ -149,6 +199,9 @@ function splitMessage(message) {
     const paragraphs = message.split(/\n\s*\n/);
 
     for (const paragraph of paragraphs) {
+        // Skip empty paragraphs
+        if (!paragraph.trim()) continue;
+
         // If paragraph fits in chunk, add it
         if (currentChunk.length + paragraph.length < maxLength) {
             currentChunk += (currentChunk ? '\n\n' : '') + paragraph;
