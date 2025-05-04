@@ -20,7 +20,7 @@ SYSTEM_PROMPT="optional-prompt-to-determine-AI-goals-and-personality"
 KEYWORDS=optional, list, of, keywords, to, trigger, bot
 PROMPT_EVASION_DETECTION=true/false
 PROMPT_EVASION_DETECTION_MESSAGE=Nice try.
-BOT_DETECTION=true/false (optional)
+BOT_DETECTION=true/false
 BOT_DETECTION_MESSAGE=I am not a bot!
 ```
 You can find your Discord bot token and app ID by following these steps:
@@ -70,7 +70,7 @@ There are three arguments the deploy-commands script can be run with:
 
 Once the commands are deployed, run the bot with:
 ```
-node index.js
+node index
 ```
 
 ## Usage
