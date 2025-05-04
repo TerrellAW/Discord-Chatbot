@@ -151,7 +151,7 @@ export default {
                 // Check if the response is empty
                 if (!fullResponse) {
                     console.log("Empty response received from the model.");
-                    console.log("Response:", fullResponse);
+                    console.log("Response:", fullResponse, "If this isn't empty, contact me immediately.");
                     await message.reply("Sorry, I couldn't come up with a response.");
                     return;
                 }
@@ -182,7 +182,7 @@ export default {
                 contexts[contextKey].push({
                     role: "assistant",
                     content: fullResponse,
-                });  
+                });
             }
             catch (error) {
                 console.error('Error processing chatbot response:', error);
