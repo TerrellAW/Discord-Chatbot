@@ -15,12 +15,13 @@ APP_ID=your-discord-app-id
 DISCORD_TOKEN=your-discord-bot-token
 SERVER_ID=your-development-server-id
 AI_MODEL=AI-model-api-identifier-from-LMStudio-developer-tab
-SYSTEM_PROMPT="optional-prompt-to-determine-AI-goals-and-personality" (optional)
-KEYWORDS=optional, list, of, keywords, to, trigger, bot (optional)
-PROMPT_EVASION_DETECTION=true/false (optional)
-PROMPT_EVASION_DETECTION_MESSAGE=Nice try. (optional)
+# Optional Variables
+SYSTEM_PROMPT="optional-prompt-to-determine-AI-goals-and-personality"
+KEYWORDS=optional, list, of, keywords, to, trigger, bot
+PROMPT_EVASION_DETECTION=true/false
+PROMPT_EVASION_DETECTION_MESSAGE=Nice try.
 BOT_DETECTION=true/false (optional)
-BOT_DETECTION_MESSAGE=I am not a bot! (optional)
+BOT_DETECTION_MESSAGE=I am not a bot!
 ```
 You can find your Discord bot token and app ID by following these steps:
  1. Go to the Discord Developer Portal: https://discord.com/developers/applications
@@ -42,8 +43,6 @@ In LM Studio you can find and download models using the Discover tab. Once LM St
 2. Run the server from the Developer tab.
 3. Select a model to load.
 4. Copy the model name from the loaded model or the info side panel and paste it into .env file as the value of the AI_MODEL environment variable.
-
-The code is designed to work with Deepseek Coder V2, but any other model can be used if you copy their name from LM Studio's Developer tab to the relevant area in the Initialize LMStudio client part of message.js.
 
 ## Deployment
 Once you have installed the dependencies, you can deploy the commands by running:
