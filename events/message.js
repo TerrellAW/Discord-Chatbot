@@ -151,7 +151,8 @@ export default {
                 // Check if the response is empty
                 if (!fullResponse) {
                     console.log("Empty response received from the model.");
-                    await message.reply("Sorry, I couldn't come up with a response");
+                    console.log("Response:", fullResponse);
+                    await message.reply("Sorry, I couldn't come up with a response.");
                     return;
                 }
 

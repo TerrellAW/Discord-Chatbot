@@ -161,7 +161,7 @@ function processData(data) {
                    `${progressBar}\n` +
                    `${progressText}\n` +
                    `**Average Contribution:** ${avgContributionsText}\n` +
-                   `-------------------------------------------------------`,
+                   `-------------------------------------------`,
         });
     });
 
