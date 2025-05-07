@@ -101,7 +101,7 @@ export default {
                 });
 
                 // Limit context size by amount of messages
-                const maxContextMessages = 10; // Adjust this value as needed
+                const maxContextMessages = 40; // Adjust this value as needed
                 if (contexts[contextKey].length > maxContextMessages) {
                     // Keep system prompt and remove oldest user messages
                     const systemPrompt = contexts[contextKey][0];
@@ -156,13 +156,15 @@ export default {
                     return;
                 }
 
-                // Remove surrounding quotation marks if present
-                if (fullResponse.startsWith('"') && fullResponse.endsWith('"')) {
-                    fullResponse = fullResponse.slice(1, -1);
-                }
 
-                // Also handle escaped quotes that might appear in JSON responses
-                fullResponse = fullResponse.replace(/\\"/g, '"');
+                // Remove surrounding quotation marks if present, may be necessary if the model returns a string with quotes
+                // Quotes usually arise from the system prompt being surrounded by quotes in the .env file
+                // if (fullResponse.startsWith('"') && fullResponse.endsWith('"')) {
+                //     fullResponse = fullResponse.slice(1, -1);
+                // }
+
+                // // Also handle escaped quotes that might appear in JSON responses
+                // fullResponse = fullResponse.replace(/\\"/g, '"');
 
                 // Check if message exceeds Discord's character limit
                 if (fullResponse.length > maxLength) {
