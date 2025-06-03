@@ -171,9 +171,8 @@ export default {
         if (!fullResponse) {
           console.log("Empty response received from the model.");
           console.log(
-            "Response:",
+            "Response (If there is a response contact me immediately):",
             fullResponse,
-            "If this isn't empty, contact me immediately.",
           );
           await message.reply("Sorry, I couldn't come up with a response.");
           return;
@@ -293,7 +292,7 @@ export function clearMemory(interaction) {
     if (contexts[contextKey]) contexts[contextKey] = [];
   } else {
     // Clear all contexts if no interaction provided
-    Object.keys(contexts).forEach(key => {
+    Object.keys(contexts).forEach((key) => {
       contexts[key] = [];
     });
   }
