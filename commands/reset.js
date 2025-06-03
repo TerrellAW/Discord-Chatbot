@@ -8,7 +8,8 @@ export default {
     .setDescription("Reset the bot's memory. Soft reboot."),
   async execute(interaction) {
     await interaction.reply("Resetting...");
-    // Reset bot's memory and soft reboot
+    // Reset bot's memory
     clearMemory(interaction);
+    console.log("Memory reset");
   },
 };
